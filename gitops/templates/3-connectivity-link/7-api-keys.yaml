@@ -5,8 +5,6 @@ kind: Secret
 metadata:
   name: apikey-free-user
   namespace: {{ .Values.modelServing.namespace }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "60"
   labels:
     app.kubernetes.io/part-of: openshift-ai-ref
     app.kubernetes.io/managed-by: Helm
@@ -23,8 +21,6 @@ kind: Secret
 metadata:
   name: apikey-pro-user
   namespace: {{ .Values.modelServing.namespace }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "60"
   labels:
     app.kubernetes.io/part-of: openshift-ai-ref
     app.kubernetes.io/managed-by: Helm

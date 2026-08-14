@@ -6,7 +6,6 @@ metadata:
   name: model-route
   namespace: {{ .Values.modelServing.namespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "55"
     argocd.argoproj.io/sync-options: SkipDryRun=true
   labels:
     app.kubernetes.io/part-of: openshift-ai-ref
