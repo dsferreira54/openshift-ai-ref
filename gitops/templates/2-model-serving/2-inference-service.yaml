@@ -1,0 +1,28 @@
+{{- if .Values.modelServing.enabled }}
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: {{ .Values.modelServing.model.name }}
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
+    argocd.argoproj.io/sync-options: SkipDryRun=true
+    serving.kserve.io/deploymentMode: RawDeployment
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+    opendatahub.io/dashboard: "true"
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: vLLM
+      runtime: vllm-cpu-runtime
+      storageUri: {{ .Values.modelServing.model.storageUri | quote }}
+      ports:
+        - containerPort: 8080
+          protocol: TCP
+    minReplicas: 1
+    maxReplicas: 1
+{{- end }}

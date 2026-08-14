@@ -1,0 +1,13 @@
+{{- if .Values.modelServing.enabled }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "30"
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+    opendatahub.io/dashboard: "true"
+{{- end }}

@@ -1,0 +1,36 @@
+{{- if .Values.connectivityLink.enabled }}
+---
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: model-api-key-auth
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "60"
+    argocd.argoproj.io/sync-options: SkipDryRun=true
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: model-route
+  rules:
+    authentication:
+      api-key:
+        apiKey:
+          selector:
+            matchLabels:
+              app: openshift-ai-ref
+    response:
+      success:
+        filters:
+          tier:
+            json:
+              properties:
+                group:
+                  expression: auth.identity.metadata.labels["usage-tier"]
+                userid:
+                  expression: auth.identity.metadata.labels["user-id"]
+{{- end }}

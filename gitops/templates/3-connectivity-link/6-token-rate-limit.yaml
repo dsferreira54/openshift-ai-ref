@@ -1,0 +1,40 @@
+{{- if .Values.connectivityLink.enabled }}
+---
+apiVersion: kuadrant.io/v1alpha1
+kind: TokenRateLimitPolicy
+metadata:
+  name: model-token-limits
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "60"
+    argocd.argoproj.io/sync-options: SkipDryRun=true
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: model-route
+  limits:
+    free-users:
+      rates:
+        - limit: {{ .Values.connectivityLink.tokenLimits.free.limit }}
+          window: {{ .Values.connectivityLink.tokenLimits.free.window }}
+      when:
+        - predicate: request.path.startsWith("/v1/chat/completions")
+        - predicate: |
+            auth.tier.group == "free"
+      counters:
+        - expression: auth.tier.userid
+    pro-users:
+      rates:
+        - limit: {{ .Values.connectivityLink.tokenLimits.pro.limit }}
+          window: {{ .Values.connectivityLink.tokenLimits.pro.window }}
+      when:
+        - predicate: request.path.startsWith("/v1/chat/completions")
+        - predicate: |
+            auth.tier.group == "pro"
+      counters:
+        - expression: auth.tier.userid
+{{- end }}

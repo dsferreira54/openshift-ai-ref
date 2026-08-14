@@ -1,0 +1,38 @@
+{{- if .Values.connectivityLink.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apikey-free-user
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "60"
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+    authorino.kuadrant.io/managed-by: authorino
+    app: openshift-ai-ref
+    usage-tier: free
+    user-id: free-user-1
+type: Opaque
+stringData:
+  api_key: {{ .Values.connectivityLink.apiKeys.free.key | quote }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apikey-pro-user
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "60"
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+    authorino.kuadrant.io/managed-by: authorino
+    app: openshift-ai-ref
+    usage-tier: pro
+    user-id: pro-user-1
+type: Opaque
+stringData:
+  api_key: {{ .Values.connectivityLink.apiKeys.pro.key | quote }}
+{{- end }}

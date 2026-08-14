@@ -1,0 +1,28 @@
+{{- if .Values.connectivityLink.enabled }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: model-route
+  namespace: {{ .Values.modelServing.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "55"
+    argocd.argoproj.io/sync-options: SkipDryRun=true
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+spec:
+  parentRefs:
+    - name: {{ .Values.connectivityLink.gateway.name }}
+      namespace: {{ .Values.modelServing.namespace }}
+  hostnames:
+    - "{{ .Values.connectivityLink.gateway.hostname }}.{{ .Values.ingressDomain }}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
+      backendRefs:
+        - name: {{ .Values.modelServing.model.name }}
+          port: 8080
+{{- end }}
