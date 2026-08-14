@@ -23,14 +23,31 @@ A estrutura abaixo é autoritativa e não deve ser reorganizada sem solicitaçã
 openshift-ai-ref/
 ├── AGENTS.md
 ├── deploy.sh
-├── gitops/
-│   ├── Chart.yaml
-│   ├── .helmignore
-│   ├── values.yaml
-│   └── templates/
-│       └── .gitkeep
 ├── .gitignore
-└── README.md
+├── README.md
+└── gitops/
+    ├── Chart.yaml
+    ├── .helmignore
+    ├── values.yaml
+    └── templates/
+        ├── 1-openshift-ai/
+        │   ├── 0-operator.yaml
+        │   ├── 1-dsci.yaml
+        │   └── 2-dsc.yaml
+        ├── 2-model-serving/
+        │   ├── 0-namespace.yaml
+        │   ├── 1-serving-runtime.yaml
+        │   └── 2-inference-service.yaml
+        └── 3-connectivity-link/
+            ├── 0-namespace.yaml
+            ├── 1-operator.yaml
+            ├── 2-kuadrant.yaml
+            ├── 3-gateway.yaml
+            ├── 3a-gateway-route.yaml
+            ├── 4-httproute.yaml
+            ├── 5-auth-policy.yaml
+            ├── 6-token-rate-limit.yaml
+            └── 7-api-keys.yaml
 ```
 
 Responsabilidades:
@@ -44,36 +61,41 @@ Responsabilidades:
 
 ## 3. Fases do projeto
 
-### Fase 1 — Estrutura básica e GitOps (atual)
+### Fase 1 — Estrutura básica e GitOps (concluída)
 
-- Criar a estrutura do repositório inspirada no padrão `rhbk-demo`.
-- Criar `deploy.sh` para instalar o Argo CD e apontar para este repositório.
-- Validar que o Argo CD sincroniza com o repositório (mesmo que o chart ainda esteja vazio).
+- [x] Criar a estrutura do repositório inspirada no padrão `rhbk-demo`.
+- [x] Criar `deploy.sh` para instalar o Argo CD e apontar para este repositório.
+- [x] Validar que o Argo CD sincroniza com o repositório.
 
-### Fase 2 — OpenShift AI
+### Fase 2 — OpenShift AI (concluída)
 
-- Instalar o operador OpenShift AI via manifestos no Helm chart.
-- Criar o `DataScienceCluster` e recursos necessários.
-- Validar que o OpenShift AI está operacional.
+- [x] Instalar o operador OpenShift AI via manifestos no Helm chart (`stable-3.x`).
+- [x] Criar o `DSCInitialization` com Service Mesh desabilitado (RawDeployment mode).
+- [x] Criar o `DataScienceCluster` com KServe em modo RawDeployment, componentes mínimos.
+- [x] Validar que o OpenShift AI está operacional.
 
-### Fase 3 — Modelo em CPU
+### Fase 3 — Modelo em CPU (concluída)
 
-- Selecionar um modelo leve do catálogo Red Hat compatível com CPU (sem GPU).
-- Criar o `InferenceService` (KServe) com runtime adequado (ex.: vLLM ou Caikit).
-- Validar que o modelo responde a requisições de inferência.
+- [x] Modelo selecionado: `Qwen/Qwen2.5-0.5B-Instruct` (0.5B parâmetros, público, compatível com CPU).
+- [x] Runtime: `vllm-cpu-runtime` com imagem oficial `registry.redhat.io/rhaii/vllm-cpu-rhel9` (RHOAI 3.4).
+- [x] `InferenceService` em modo RawDeployment com `storageUri: hf://Qwen/Qwen2.5-0.5B-Instruct`.
+- [x] Validar que o modelo responde a requisições de inferência (API OpenAI-compatible).
 
-### Fase 4 — Model as a Service (MaaS)
+### Fase 4 — Model as a Service (MaaS) (concluída)
 
-- Expor o modelo via rota do OpenShift.
-- Validar endpoint de inferência acessível externamente.
+- [x] Modelo exposto via Gateway API (Istio/RHCL) + OpenShift Route.
+- [x] Endpoint externo: `https://ai-gateway.<ingressDomain>/v1/chat/completions`.
+- [x] Validar endpoint de inferência acessível externamente.
 
-### Fase 5 — Connectivity Link com contagem de tokens
+### Fase 5 — Connectivity Link com contagem de tokens (concluída)
 
-- Instalar o Red Hat Connectivity Link (Kuadrant).
-- Configurar gateway de API para o endpoint de inferência.
-- Implementar política de rate limiting baseada em contagem de tokens.
-- Criar consumidores (usuários) com limites diários de tokens.
-- Validar que a contagem de tokens funciona corretamente.
+- [x] Instalar o Red Hat Connectivity Link (`rhcl-operator`, canal `stable`).
+- [x] Criar `Kuadrant` CR e `GatewayClass` (`openshift-default`, controlador nativo OCP).
+- [x] Configurar `Gateway` + `HTTPRoute` para o endpoint de inferência.
+- [x] Implementar `AuthPolicy` com autenticação por API key (Secrets do Kubernetes).
+- [x] Implementar `TokenRateLimitPolicy` com contagem automática de tokens (`usage.total_tokens`).
+- [x] Criar consumidores: free (5.000 tokens/dia) e pro (50.000 tokens/dia).
+- [x] Validar que a contagem de tokens funciona: requests dentro do limite retornam 200, acima retornam 429.
 
 ---
 
