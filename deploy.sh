@@ -86,7 +86,7 @@ spec:
     syncOptions:
       - ApplyOutOfSyncOnly=true
       - SkipDryRunOnMissingResource=true
-      - ServerSideApply=true
+      - CreateNamespace=true
     retry:
       limit: -1
       backoff:

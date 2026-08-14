@@ -5,7 +5,7 @@ kind: GatewayClass
 metadata:
   name: openshift-default
   annotations:
-    argocd.argoproj.io/sync-wave: "45"
+    argocd.argoproj.io/sync-wave: "40"
     argocd.argoproj.io/sync-options: SkipDryRun=true
   labels:
     app.kubernetes.io/part-of: openshift-ai-ref
@@ -19,7 +19,7 @@ metadata:
   name: kuadrant
   namespace: {{ .Values.connectivityLink.namespace }}
   annotations:
-    argocd.argoproj.io/sync-wave: "45"
+    argocd.argoproj.io/sync-wave: "40"
     argocd.argoproj.io/sync-options: SkipDryRun=true
   labels:
     app.kubernetes.io/part-of: openshift-ai-ref
