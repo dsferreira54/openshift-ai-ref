@@ -33,13 +33,8 @@ spec:
         - "/mnt/models"
         - "--served-model-name"
         - "{{ .Values.modelServing.model.name }}"
-        - "--device"
-        - "cpu"
-        - "--dtype"
-        - "float32"
         - "--max-model-len"
         - "1024"
-        - "--enforce-eager"
       env:
         - name: VLLM_CPU_KVCACHE_SPACE
           value: {{ .Values.modelServing.vllm.kvCacheSpace | quote }}
