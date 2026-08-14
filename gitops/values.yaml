@@ -1,2 +1,49 @@
 # Set to your cluster's apps domain (oc get ingresses.config/cluster -o jsonpath='{.spec.domain}')
 ingressDomain: apps.cluster-ml5qp.dyn.redhatworkshops.io
+
+# --- Phase 2: OpenShift AI ---
+openShiftAI:
+  enabled: true
+  operator:
+    channel: stable-3.x
+
+# --- Phase 3/4: Model Serving ---
+modelServing:
+  enabled: true
+  namespace: ai-model-serving
+  model:
+    name: qwen-05b
+    storageUri: "hf://Qwen/Qwen2.5-0.5B-Instruct"
+  resources:
+    requests:
+      cpu: "4"
+      memory: "8Gi"
+    limits:
+      cpu: "8"
+      memory: "16Gi"
+  vllm:
+    kvCacheSpace: "2"
+
+# --- Phase 5: Connectivity Link ---
+connectivityLink:
+  enabled: true
+  namespace: kuadrant-system
+  operator:
+    channel: stable
+  gateway:
+    name: ai-gateway
+    hostname: ai-gateway
+  apiKeys:
+    free:
+      key: sk-free-demo-key-openshift-ai-ref
+      group: free
+    pro:
+      key: sk-pro-demo-key-openshift-ai-ref
+      group: pro
+  tokenLimits:
+    free:
+      limit: 5000
+      window: 24h
+    pro:
+      limit: 50000
+      window: 24h

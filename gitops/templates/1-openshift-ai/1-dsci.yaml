@@ -1,0 +1,21 @@
+{{- if .Values.openShiftAI.enabled }}
+---
+apiVersion: dscinitialization.opendatahub.io/v1
+kind: DSCInitialization
+metadata:
+  name: default-dsci
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-options: SkipDryRun=true
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+spec:
+  applicationsNamespace: redhat-ods-applications
+  monitoring:
+    managementState: Removed
+  serviceMesh:
+    managementState: Removed
+  trustedCABundle:
+    managementState: Managed
+{{- end }}

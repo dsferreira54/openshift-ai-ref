@@ -1,0 +1,19 @@
+{{- if .Values.openShiftAI.enabled }}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rhods-operator
+  namespace: openshift-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/part-of: openshift-ai-ref
+    app.kubernetes.io/managed-by: Helm
+spec:
+  channel: {{ .Values.openShiftAI.operator.channel | quote }}
+  installPlanApproval: Automatic
+  name: rhods-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+{{- end }}
