@@ -22,7 +22,7 @@ spec:
       name: vLLM
   containers:
     - name: kserve-container
-      image: quay.io/modh/vllm:rhoai-2.22-cuda
+      image: registry.redhat.io/rhaii/vllm-cpu-rhel9@sha256:0ec0f5ff9a5ff263f58db0cfb19e3d7eef24b94c2d8629fe5145f5a8747e28c9
       command:
         - python
         - -m
