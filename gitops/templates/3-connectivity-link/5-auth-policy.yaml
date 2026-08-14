@@ -19,6 +19,7 @@ spec:
     authentication:
       api-key:
         apiKey:
+          allNamespaces: true
           selector:
             matchLabels:
               app: openshift-ai-ref
