@@ -1,0 +1,2 @@
+# Set to your cluster's apps domain (oc get ingresses.config/cluster -o jsonpath='{.spec.domain}')
+ingressDomain: apps.cluster-ml5qp.dyn.redhatworkshops.io
