@@ -22,6 +22,6 @@ spec:
             type: PathPrefix
             value: /v1
       backendRefs:
-        - name: {{ .Values.modelServing.model.name }}
-          port: 8080
+        - name: {{ .Values.modelServing.model.name }}-predictor
+          port: 80
 {{- end }}
